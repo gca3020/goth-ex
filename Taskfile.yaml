@@ -1,0 +1,61 @@
+version: '3'
+
+dotenv: [".env"]
+
+tasks:
+  init:
+    desc: "Initialize the project and install required tools"
+    cmds:
+      - go install github.com/cosmtrek/air@latest
+      - go install github.com/a-h/templ/cmd/templ@latest
+      - go install -tags 'pgx5' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+  
+  dev:
+    desc: "Run the auto-reloading dev server"
+    cmd: air
+
+  deps:
+    desc: "Update project dependencies and third-party code"
+    deps:
+      - init
+    cmds:
+      - curl -L -o {{.ASSET_DIR}}/pico.min.css {{.PICO_CSS_CDN}}
+      - curl -L -o {{.ASSET_DIR}}/htmx.min.js {{.HTMX_CDN}}
+      - go get -u ./... && go mod tidy
+    vars:
+      ASSET_DIR: "{{.ROOT_DIR}}/assets/assets"
+      PICO_CSS_CDN: https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css
+      HTMX_CDN: https://unpkg.com/htmx.org/dist/htmx.min.js
+  
+  db:
+    desc: Start the Database and Migrate it to the latest schema
+    cmds:
+      - task: db-start
+      - sleep 2
+      - task: db-migrate-up
+
+  db-start:
+    desc: Start a development database server running in Docker
+    cmds:
+      - "docker run --rm --name postgres -p {{.PGSQL_PORT}}:5432 \
+        -e POSTGRES_USER={{.PGSQL_USER}} \
+        -e POSTGRES_PASSWORD={{.PGSQL_PASSWORD}} \
+        -e POSTGRES_DB={{.PGSQL_DB}} \
+        -d postgres"
+
+  db-stop:
+    desc: Stop the development database container
+    cmd: "docker stop postgres"
+
+  db-migrate-up:
+    desc: Migrate the database up to the latest schema
+    cmd: migrate -database {{.PGSQL_URL}} -path {{.ROOT_DIR}}/db/migrations up
+    vars:
+      PGSQL_URL: "pgx5://{{.PGSQL_USER}}:{{.PGSQL_PASSWORD}}@{{.PGSQL_HOST}}:{{.PGSQL_PORT}}/{{.PGSQL_DB}}?sslmode=disable"
+
+  db-migrate-down:
+    desc: Migrate the database down a schema version
+    cmd: migrate -database {{.PGSQL_URL}} -path {{.ROOT_DIR}}/db/migrations down
+    vars:
+      PGSQL_URL: "pgx5://{{.PGSQL_USER}}:{{.PGSQL_PASSWORD}}@{{.PGSQL_HOST}}:{{.PGSQL_PORT}}/{{.PGSQL_DB}}?sslmode=disable"
+

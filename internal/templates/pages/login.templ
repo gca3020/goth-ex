@@ -1,0 +1,75 @@
+package pages
+
+templ LoginPage(signup bool, errs map[string]string) {
+	@Page() {
+		@LoginForm(signup, errs)
+	}
+}
+
+css loginForm() {
+	max-width: 400px;
+}
+
+templ LoginForm(signup bool, errs map[string]string) {
+	<main class={ "container", loginForm() }>
+		if signup {
+			<h1>Sign Up</h1>
+		} else {
+			<h1>Log In</h1>
+		}
+		<form method="post">
+			// User Name
+			if signup {
+				<label for="name">Name</label>
+				<input
+					id="name"
+					name="name"
+					autocomplete="username"
+					if errs["signupData.Name"] != "" {
+						aria-invalid="true"
+					}
+				/>
+				<small>{ errs["signupData.Name"] } </small>
+			}
+			// User Email
+			<label for="email">Email</label>
+			<input
+				id="email"
+				name="email"
+				type="email"
+				autocomplete="email"
+				if errs["signupData.Email"] != "" {
+					aria-invalid="true"
+				}
+			/>
+			<small>{ errs["signupData.Email"] } </small>
+			// Password
+			<label for="password">Password</label>
+			<input
+				id="password"
+				name="password"
+				type="password"
+				autocomplete="password"
+				if errs["signupData.Password"] != "" {
+					aria-invalid="true"
+				}
+			/>
+			<small>{ errs["signupData.Password"] }</small>
+			// Confirm Password
+			if signup {
+				<label for="confirm">Confirm Password</label>
+				<input
+					id="confirm"
+					name="confirm"
+					type="password"
+					if errs["signupData.Confirmation"] != "" {
+						aria-invalid="true"
+					}
+				/>
+				<small>{ errs["signupData.Confirmation"] }</small>
+			}
+			<!-- Submit -->
+			<input type="submit" value="Login"/>
+		</form>
+	</main>
+}

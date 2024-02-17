@@ -1,0 +1,9 @@
+{
+    "editor.formatOnSave": true,
+    "emmet.includeLanguages": {
+        "templ": "html"
+    },
+    "[templ]": {
+        "editor.defaultFormatter": "a-h.templ"
+    },
+}

@@ -1,0 +1,52 @@
+package pages
+
+import "github.com/go-chi/jwtauth"
+
+func GetUser(ctx context.Context) string {
+	_, claims, _ := jwtauth.FromContext(ctx)
+	if name, ok := claims["name"]; ok {
+		return name.(string)
+	}
+	return ""
+}
+
+func LoggedIn(ctx context.Context) bool {
+	return false
+}
+
+templ Nav() {
+	<header class="container">
+		<nav>
+			<ul><li><strong>Example App</strong></li></ul>
+			<ul>
+				if GetUser(ctx) == "" {
+					<li><a href="/login" class="contrast">Login</a></li>
+					<li><a href="/signup" class="contrast">Sign Up</a></li>
+				} else {
+					<li><div class="contrast">Hello, { GetUser(ctx) }</div></li>
+					<li><a hx-post="/logout" hx-target="body" class="contrast">Logout</a></li>
+				}
+			</ul>
+		</nav>
+	</header>
+}
+
+templ Page() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<title>Example</title>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<meta name="robots" content="index, follow"/>
+			<meta name="revisit-after" content="7 days"/>
+			<meta name="language" content="English"/>
+			<meta name="color-scheme" content="light dark"/>
+			<link rel="stylesheet" href="/assets/pico.min.css"/>
+			<script src="/assets/htmx.min.js"></script>
+		</head>
+		<body>
+			{ children... }
+		</body>
+	</html>
+}

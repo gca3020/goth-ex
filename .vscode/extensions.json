@@ -1,0 +1,19 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
+	// Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
+
+	// List of extensions which should be recommended for users of this workspace.
+	"recommendations": [
+		"a-h.templ", // Templ Syntax Highlighting and Autocomplete
+		"davidanson.vscode-markdownlint", // Linting for Markdown Documentation
+		"golang.go", // The official Golang Extension
+		"otovo-oss.htmx-tags", // HTMX Tags Autocompletion and Documentation
+		"redhat.vscode-yaml", // YAML Syntax Highlighting for Taskfile.yaml
+		"tamasfe.even-better-toml", // TOML Syntax Highlighting for .air.toml
+		"task.vscode-task", // Task Runner Extension
+	],
+	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
+	"unwantedRecommendations": [
+		
+	]
+}
